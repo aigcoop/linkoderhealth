@@ -63,7 +63,7 @@
             const isNew = !data?.url;
 
             return (
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 last:mb-0 shadow-inner">
+                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 last:mb-0 shadow-inner text-left">
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-2">
                             <input 
@@ -121,12 +121,15 @@
             );
         };
 
-        const OptimizedImage = ({ src, alt, className, aspect = "aspect-[4/5]" }) => {
+        const OptimizedImage = ({ src, alt, className, aspect = "aspect-[4/5]", onClick }) => {
             const [loaded, setLoaded] = useState(false);
             const [error, setError] = useState(false);
 
             return (
-                <div className={`relative overflow-hidden ${aspect} ${className} bg-slate-200`}>
+                <div 
+                    className={`relative overflow-hidden ${aspect} ${className} bg-slate-200 ${onClick ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
+                    onClick={onClick}
+                >
                     {!loaded && !error && <div className="absolute inset-0 skeleton" />}
                     <img 
                         src={src} 
@@ -176,6 +179,7 @@
             const [selectedCategory, setSelectedCategory] = useState("전체보기");
             const [searchQuery, setSearchQuery] = useState("");
             const [selectedProduct, setSelectedProduct] = useState(null);
+            const [fullScreenImage, setFullScreenImage] = useState(null); // 전체화면 이미지 상태 추가
             const [showToast, setShowToast] = useState(null);
             const [personalLinks, setPersonalLinks] = useState({});
             const [myCustomLinks, setMyCustomLinks] = useState([]);
@@ -306,8 +310,8 @@
 
             return (
                 <div className="min-h-screen pb-24 text-slate-900">
-                    <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b px-4 py-4 h-16 flex items-center justify-between shadow-sm">
-                        <div className="flex items-center gap-2 overflow-hidden">
+                    <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b px-4 py-4 h-16 flex items-center justify-between shadow-sm text-center">
+                        <div className="flex items-center gap-2 overflow-hidden mx-auto md:mx-0">
                             <div className="bg-indigo-600 p-1.5 rounded-lg text-white shadow-lg flex-shrink-0"><Icon name="layout-grid" size={18} /></div>
                             <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 overflow-hidden">
                                 <h1 className="text-[11px] md:text-sm font-black text-slate-800 tracking-tight whitespace-nowrap truncate">
@@ -330,7 +334,7 @@
                         <div className="px-4 py-2 border-b bg-slate-50">
                             <div className="relative">
                                 <Icon name="search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input type="text" placeholder="제품명 검색..." className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                                <input type="text" placeholder="제품명 검색..." className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm text-center" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                             </div>
                         </div>
                         <div className="flex items-center bg-white px-2 overflow-x-auto no-scrollbar py-3 gap-2">
@@ -388,12 +392,13 @@
                         )}
                     </main>
 
+                    {/* Product Detail Modal */}
                     {selectedProduct && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={() => setSelectedProduct(null)}>
-                            <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden flex flex-col h-[85vh] shadow-2xl relative" onClick={e => e.stopPropagation()}>
+                            <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden flex flex-col h-[85vh] shadow-2xl relative text-center" onClick={e => e.stopPropagation()}>
                                 <div className="p-6 flex justify-between items-start border-b shrink-0 bg-white">
                                     <div className="flex-1 pr-4">
-                                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                                        <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
                                             <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase border border-indigo-100">{selectedProduct.category}</span>
                                             <button onClick={() => handleBatchDownload(null, selectedProduct)} className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1 active:scale-95"><Icon name="download" size={10} /> 전체 저장</button>
                                         </div>
@@ -404,17 +409,22 @@
                                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-50/30">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                                         {selectedProduct.images.map((img, idx) => (
-                                            <div key={idx} className="relative group rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white text-center">
-                                                <OptimizedImage src={img} alt={idx} aspect="aspect-square" />
+                                            <div key={idx} className="relative group rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white">
+                                                <OptimizedImage 
+                                                    src={img} 
+                                                    alt={idx} 
+                                                    aspect="aspect-square" 
+                                                    onClick={() => setFullScreenImage(img)} // 클릭 시 전체화면 설정
+                                                />
                                                 <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-full font-bold">{idx === 0 ? "메인 대표컷" : `이미지 ${idx+1}`}</div>
-                                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                    <button onClick={() => { const link = document.createElement('a'); link.href = img; link.download = `${selectedProduct.title}_${idx+1}.jpg`; link.click(); }} className="p-3.5 bg-white text-slate-800 rounded-2xl shadow-xl active:scale-90"><Icon name="download" size={20} /></button>
+                                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 pointer-events-none">
+                                                    <div className="bg-white/90 text-slate-800 px-3 py-1.5 rounded-xl text-[10px] font-bold shadow-lg">크게 보기</div>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
-                                    <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-4 text-center">
-                                        <div className="flex items-center justify-center gap-2 mb-4 italic font-bold text-slate-800">제품 링크오더</div>
+                                    <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-4">
+                                        <div className="flex items-center justify-center gap-2 mb-4 italic font-bold text-slate-800 underline decoration-indigo-200">제품 링크오더</div>
                                         {[{ num: 1, label: "링크 1" }, { num: 2, label: "링크 2" }, { num: 3, label: "웹사이트 주소" }].map((item) => (
                                             <LinkOrderItem 
                                                 key={item.num} 
@@ -430,6 +440,26 @@
                                         ))}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Image Full Screen Overlay */}
+                    {fullScreenImage && (
+                        <div className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-2 sm:p-8 animate-in fade-in zoom-in-95 duration-200" onClick={() => setFullScreenImage(null)}>
+                            <div className="relative w-full h-full flex items-center justify-center max-w-4xl mx-auto">
+                                <button 
+                                    onClick={() => setFullScreenImage(null)}
+                                    className="absolute top-4 right-4 z-[210] p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors active:scale-90"
+                                >
+                                    <Icon name="x" size={28} />
+                                </button>
+                                <img 
+                                    src={fullScreenImage} 
+                                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" 
+                                    alt="Full view"
+                                    onClick={e => e.stopPropagation()}
+                                />
                             </div>
                         </div>
                     )}
