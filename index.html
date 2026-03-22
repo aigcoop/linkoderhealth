@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지쿱 제품 이미지 및 성분표, 링크오더 보관소</title>
+    <!-- 라이브러리 로드 (CDN) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useRef, useEffect } = React;
+
+        const Icon = ({ name, size = 20, className = "" }) => {
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
+        };
+
+        const LinkOrderItem = ({ productId, num, data, onSave, onDelete, onCopy, onShare, defaultLabel }) => {
+            const [name, setName] = useState(data?.name || defaultLabel);
+            const [url, setUrl] = useState(data?.url || "");
+            
+            useEffect(() => {
+                if (data) {
+                    setName(data.name || defaultLabel);
+                    setUrl(data.url || "");
+                } else {
+                    setName(defaultLabel);
+                    setUrl("");
+                }
+            }, [data, num, defaultLabel]);
+
+            const isNew = !data?.url;
+
+            return (
+                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 last:mb-0 shadow-inner">
+                    <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2">
+                            <input 
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="이름 (예: 개인 쇼핑몰)"
+                                className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 outline-none focus:ring-2 focus:ring-indigo-100 w-full"
+                            />
+                        </div>
+                        
+                        <div className="flex flex-col gap-1">
+                            <input 
+                                type="text" 
+                                value={url}
+                                onChange={(e) => setUrl(e.target.value)}
+                                placeholder="마케팅 주소(URL)를 입력하세요"
+                                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-100 transition-all text-slate-600"
+                            />
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                            <button 
+                                onClick={() => onSave(productId, num, name, url)}
+                                className={`flex-1 ${isNew ? 'bg-indigo-600' : 'bg-slate-700'} text-white px-3 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95 transition-all shadow-sm`}
+                            >
+                                <Icon name={isNew ? "plus-circle" : "edit-3"} size={12} /> {isNew ? "등록" : "변경"}
+                            </button>
+                            
+                            {!isNew && (
+                                <>
+                                    <button 
+                                        onClick={() => onCopy(url, name)}
+                                        className="bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95 shadow-sm"
+                                    >
+                                        <Icon name="copy" size={12} /> 복사
+                                    </button>
+                                    <button 
+                                        onClick={() => onShare(name, url)}
+                                        className="bg-white text-blue-600 border border-blue-100 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95 shadow-sm"
+                                    >
+                                        <Icon name="share" size={12} /> 공유
+                                    </button>
+                                    <button 
+                                        onClick={() => onDelete(productId, num)}
+                                        className="bg-white text-rose-500 border border-rose-100 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95 shadow-sm"
+                                    >
+                                        <Icon name="trash-2" size={12} /> 삭제
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const OptimizedImage = ({ src, alt, className, aspect = "aspect-[4/5]" }) => {
+            const [loaded, setLoaded] = useState(false);
+            const [error, setError] = useState(false);
+
+            return (
+                <div className={`relative overflow-hidden ${aspect} ${className} bg-slate-200`}>
+                    {!loaded && !error && <div className="absolute inset-0 skeleton" />}
+                    <img 
+                        src={src} 
+                        alt={alt}
+                        loading="lazy"
+                        decoding="async"
+                        className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+                        onLoad={() => setLoaded(true)}
+                        onError={() => { setLoaded(true); setError(true); }}
+                    />
+                    {error && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 text-[10px]">
+                            <Icon name="image-off" size={16} className="mb-1" />
+                            이미지 없음
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const CATEGORIES = ["전체보기", "케어세르브 웨이브 플러스", "영양건강", "텔로메라GK,정", "디엘릭서", "의료기기", "기타"];
+
+        const INITIAL_PRODUCTS = [
+            { id: 1, category: "영양건강", title: "CK밸런스 파워", content: "인삼발효추출분말 100% 프리미엄 제품.", images: ["images/CK밸런스1.jpg", "images/CK밸런스2.jpg", "images/CK밸런스3.jpg", "images/CK밸런스4.jpg"] },
+            { id: 2, category: "디엘릭서", title: "디엘릭서 그린", content: "치커리뿌리추출물, 유기농 발효 콤부차 등으로 몸의 순환을 돕습니다.", images: ["images/그린1.jpg", "images/그린2.jpg", "images/그린3.jpg", "images/그린4.jpg"] },
+            { id: 3, category: "디엘릭서", title: "디엘릭서 레드", content: "ABC 분말로 지친 일상에 활력을 채워줍니다.", images: ["images/레드3.jpg", "images/레드1.jpg", "images/레드2.jpg", "images/레드4.jpg"] },
+            { id: 4, category: "디엘릭서", title: "디엘릭서 화이트 글로우", content: "내면부터 차오르는 화사한 생기를 선사합니다.", images: ["images/화이트1.jpg", "images/화이트2.jpg", "images/화이트3.jpg", "images/화이트4.jpg"] },
+            { id: 5, category: "디엘릭서", title: "디엘릭서 브라운 효소", content: "소화를 돕는 100만 유닛 고역가 효소 제품입니다.", images: ["images/효소2.jpg", "images/효소1.jpg", "images/효소3.jpg", "images/효소4.jpg"] },
+            { id: 6, category: "영양건강", title: "액티브 디에스 프로 플러스", content: "딸기맛 영양 밸런스 단백질 쉐이크입니다.", images: ["images/쉐이크1.jpg", "images/쉐이크2.jpg", "images/쉐이크3.jpg", "images/쉐이크4.jpg"] },
+            { id: 7, category: "영양건강", title: "프로바이오틱스 플러스", content: "장 건강을 위한 50억 유산균 보장 제품입니다.", images: ["images/유산균1.jpg", "images/유산균2.jpg", "images/유산균3.jpg", "images/유산균4.jpg"] },
+            { id: 8, category: "영양건강", title: "알티지 플러스(오메가3)", content: "흡수율 높은 rTG 오메가3와 멀티 비타민을 한 번에.", images: ["images/오메가1.jpg", "images/오메가2.jpg", "images/오메가3.jpg", "images/오메가4.jpg"] },
+            { id: 9, category: "영양건강", title: "제너럴 밸런스 루테인지아잔틴", content: "눈 건강을 위한 루테인 지아잔틴 복합 추출물 함유.", images: ["images/루테인1.jpg", "images/루테인2.jpg", "images/루테인3.jpg", "images/루테인4.jpg"] },
+            { id: 10, category: "영양건강", title: "제너럴 밸런스 밀크씨슬", content: "간 건강과 활력을 위한 복합 기능성 건강기능식품.", images: ["images/밀크시슬1.jpg", "images/밀크시슬2.jpg", "images/밀크시슬3.jpg", "images/밀크시슬4.jpg"] },
+            { id: 11, category: "영양건강", title: "제너럴 밸런스 비타민C", content: "영국 DSM사 프리미엄 비타민C 원료 800mg 함유.", images: ["images/비타민C1.jpg", "images/비타민C2.jpg", "images/비타민C3.jpg", "images/비타민C4.png"] },
+            { id: 12, category: "영양건강", title: "제너럴 밸런스 식물성 MSM", content: "캐나다산 고순도 식물 유래 MSM으로 관절 건강 관리.", images: ["images/MSM1.jpg", "images/MSM2.jpg", "images/MSM3.jpg", "images/MSM4.jpg"] },
+            { id: 13, category: "영양건강", title: "제너럴 밸런스 칼슘 마그네슘", content: "뼈 건강과 근육 기능 유지를 돕는 7가지 복합 기능성 성분을 함유한 프리미엄 칼슘 마그네슘 제품입니다.", images: ["images/칼슘1.jpg", "images/칼슘2.jpg", "images/칼슘3.jpg", "images/칼슘4.jpg"] },
+            { id: 14, category: "영양건강", title: "지쿱카페 게르마늄 블랙", content: "게르마늄, 베타글루칸, 폴리페놀을 건강하게 즐길 수 있는 고품격 블랙 커피입니다.", images: ["images/커피1.jpg", "images/커피2.jpg", "images/커피3.jpg", "images/커피4.jpg"] },
+            { id: 28, category: "의료기기", title: "지쿱 라피 V (LAPY V)", content: "의료용 레이저 및 적외선 에너지를 조사하여 통증 완화에 도움을 주는 프리미엄 홈케어 의료기기입니다.", images: ["images/라피1.jpg", "images/라피2.jpg", "images/라피3.jpg", "images/라피4.jpg"] },
+            { id: 29, category: "케어세르브 웨이브 플러스", title: "케어세르브 웨이브 플러스", content: "테라헤르츠 파동과 온열 기능을 결합하여 발의 피로 회복과 순환을 돕는 고성능 온열기기입니다.", images: ["images/웨이브1.jpg", "images/웨이브2.jpg", "images/웨이브3.jpg", "images/웨이브4.jpg"] },
+            { id: 30, category: "의료기기", title: "케어세르브 테라패치", content: "영구자석의 자계를 이용하여 근육통 완화에 도움을 주는 의료용 자기 발생기입니다.", images: ["images/테라패치1.jpg", "images/테라패치2.jpg", "images/테라패치3.jpg", "images/테라패치4.jpg"] },
+            { id: 31, category: "디엘릭서", title: "디엘릭서 디톡스 다이어트 세트", content: "디엘릭서 3/3/3 프로그램을 위한 풀 패키지 세트입니다.", images: ["images/디톡스1.jpg", "images/디톡스2.jpg", "images/디톡스3.jpg", "images/디톡스4.jpg"] },
+            { id: 32, category: "텔로메라GK,정", title: "텔로메라 지케이(GK)", content: "필름형 제형으로 간편하게 섭취하는 제품입니다.", images: ["images/텔로메라1.jpg", "images/텔로메라2.jpg", "images/텔로메라3.jpg", "images/텔로메라4.jpg"] },
+            { id: 33, category: "텔로메라GK,정", title: "텔로메라 정", content: "정제(알약) 형태로 영양을 압축하여 담은 건강기능식품입니다.", images: ["images/텔로메라정1.jpg", "images/텔로메라정2.jpg", "images/텔로메라정3.jpg", "images/텔로메라정4.jpg"] }
+        ];
+
+        function App() {
+            const [selectedCategory, setSelectedCategory] = useState("전체보기");
+            const [searchQuery, setSearchQuery] = useState("");
+            const [selectedProduct, setSelectedProduct] = useState(null);
+            const [showToast, setShowToast] = useState(null);
+            const [personalLinks, setPersonalLinks] = useState({});
+            const [myCustomLinks, setMyCustomLinks] = useState([]);
+            
+            const [newLinkName, setNewLinkName] = useState("");
+            const [newLinkUrl, setNewLinkUrl] = useState("");
+            const [editingLinkId, setEditingLinkId] = useState(null);
+
+            const SHOP_URL = "https://vcshop.gcoop.com/kr";
+
+            useEffect(() => {
+                const savedPersonal = localStorage.getItem('gcoop_personalLinks');
+                if (savedPersonal) setPersonalLinks(JSON.parse(savedPersonal));
+
+                const savedCustom = localStorage.getItem('gcoop_myCustomLinks');
+                if (savedCustom) setMyCustomLinks(JSON.parse(savedCustom));
+            }, []);
+
+            const filteredProducts = useMemo(() => {
+                return INITIAL_PRODUCTS.filter(p => {
+                    const matchesCategory = selectedCategory === "전체보기" || p.category === selectedCategory;
+                    return matchesCategory && p.title.toLowerCase().includes(searchQuery.toLowerCase());
+                });
+            }, [selectedCategory, searchQuery]);
+
+            const displayToast = (msg) => {
+                setShowToast(msg);
+                setTimeout(() => setShowToast(null), 2500);
+            };
+
+            const handleSaveLink = (productId, index, name, url) => {
+                if (!url) { displayToast("주소를 입력해주세요."); return; }
+                const updatedLinks = { ...personalLinks };
+                if (!updatedLinks[productId]) updatedLinks[productId] = {};
+                updatedLinks[productId][`link${index}`] = { name, url };
+                
+                setPersonalLinks(updatedLinks);
+                localStorage.setItem('gcoop_personalLinks', JSON.stringify(updatedLinks));
+                displayToast(`${name} 정보가 저장되었습니다.`);
+            };
+
+            const handleDeleteLink = (productId, index) => {
+                const updatedLinks = { ...personalLinks };
+                if (updatedLinks[productId]) {
+                    delete updatedLinks[productId][`link${index}`];
+                    setPersonalLinks(updatedLinks);
+                    localStorage.setItem('gcoop_personalLinks', JSON.stringify(updatedLinks));
+                    displayToast("정보가 삭제되었습니다.");
+                }
+            };
+
+            const handleAddCustomLink = () => {
+                if (!newLinkUrl) { displayToast("주소를 입력해주세요."); return; }
+                
+                let updatedCustom;
+                if (editingLinkId) {
+                    updatedCustom = myCustomLinks.map(link => 
+                        link.id === editingLinkId ? { ...link, name: newLinkName || "제목 없음", url: newLinkUrl } : link
+                    );
+                    displayToast("링크가 수정되었습니다.");
+                    setEditingLinkId(null);
+                } else {
+                    const newLink = {
+                        id: Date.now().toString(),
+                        name: newLinkName || "제목 없음",
+                        url: newLinkUrl,
+                        createdAt: Date.now()
+                    };
+                    updatedCustom = [newLink, ...myCustomLinks];
+                    displayToast("새 링크가 등록되었습니다.");
+                }
+                
+                setMyCustomLinks(updatedCustom);
+                localStorage.setItem('gcoop_myCustomLinks', JSON.stringify(updatedCustom));
+                setNewLinkName("");
+                setNewLinkUrl("");
+            };
+
+            const handleEditCustomLink = (link) => {
+                setNewLinkName(link.name);
+                setNewLinkUrl(link.url);
+                setEditingLinkId(link.id);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            const handleDeleteCustomLink = (id) => {
+                const updatedCustom = myCustomLinks.filter(link => link.id !== id);
+                setMyCustomLinks(updatedCustom);
+                localStorage.setItem('gcoop_myCustomLinks', JSON.stringify(updatedCustom));
+                displayToast("링크가 삭제되었습니다.");
+            };
+
+            const handleCopyText = async (text, label) => {
+                try {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    displayToast(`${label} 복사 완료!`);
+                } catch (err) { displayToast("복사 실패"); }
+            };
+
+            const handleShareLink = async (name, url) => {
+                if (!navigator.share) { handleCopyText(url, "주소"); return; }
+                try { await navigator.share({ title: name, url: url }); } catch (e) { }
+            };
+
+            const handleShareSite = async () => {
+                if (navigator.share) {
+                    try { await navigator.share({ title: '지쿱 공식 쇼핑몰', url: SHOP_URL }); } catch (e) { }
+                } else {
+                    handleCopyText(SHOP_URL, "쇼핑몰 주소");
+                }
+            };
+
+            const handleBatchDownload = (e, product) => {
+                if (e) e.stopPropagation();
+                product.images.forEach((img, index) => {
+                    const link = document.createElement('a');
+                    link.href = img;
+                    link.download = `${product.title}_${index + 1}.jpg`;
+                    setTimeout(() => link.click(), index * 250);
+                });
+                displayToast("이미지 저장 시작...");
+            };
+
+            return (
+                <div className="min-h-screen pb-24 text-slate-900">
+                    <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b px-4 py-4 h-16 flex items-center justify-between shadow-sm">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                            <div className="bg-indigo-600 p-1.5 rounded-lg text-white shadow-lg flex-shrink-0"><Icon name="layout-grid" size={18} /></div>
+                            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 overflow-hidden">
+                                <h1 className="text-[11px] md:text-sm font-black text-slate-800 tracking-tight whitespace-nowrap truncate">
+                                    지쿱 제품 이미지 및 성분표, 링크오더 보관소
+                                </h1>
+                                <div className="flex items-center gap-2">
+                                    <a href={SHOP_URL} target="_blank" rel="noopener noreferrer" className="bg-emerald-500 text-white px-2.5 py-1 rounded-full text-[9px] md:text-[10px] font-bold flex items-center justify-center gap-1 shadow-sm hover:bg-emerald-600 active:scale-95 w-fit flex-shrink-0">
+                                        <Icon name="shopping-bag" size={10} /> 지쿱 쇼핑몰 바로가기
+                                    </a>
+                                    <button onClick={handleShareSite} className="bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full text-[9px] md:text-[10px] font-bold flex items-center justify-center gap-1 border border-indigo-100 shadow-sm hover:bg-indigo-100 active:scale-95 flex-shrink-0">
+                                        <Icon name="share-2" size={10} /> 주소 공유
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <span className="bg-indigo-50 text-indigo-600 text-[9px] font-bold px-2 py-0.5 rounded-full border border-indigo-100 uppercase tracking-tighter flex-shrink-0 ml-2 hidden sm:inline-block">LOCAL FOLDER MODE</span>
+                    </header>
+
+                    <div className="fixed top-16 left-0 right-0 z-30 bg-white border-b shadow-sm">
+                        <div className="px-4 py-2 border-b bg-slate-50">
+                            <div className="relative">
+                                <Icon name="search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <input type="text" placeholder="제품명 검색..." className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                            </div>
+                        </div>
+                        <div className="flex items-center bg-white px-2 overflow-x-auto no-scrollbar py-3 gap-2">
+                            {CATEGORIES.map(cat => (
+                                <button key={cat} onClick={() => setSelectedCategory(cat)} className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all ${selectedCategory === cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-500 border-slate-200 active:bg-indigo-50'}`}>{cat}</button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <main className="pt-48 px-2 max-w-6xl mx-auto">
+                        {selectedCategory === "기타" ? (
+                            <div className="max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="bg-white rounded-[2rem] p-6 shadow-md border border-indigo-100 mb-8 text-center">
+                                    <div className="flex items-center justify-center gap-2 mb-4">
+                                        <div className="bg-indigo-600 w-1.5 h-5 rounded-full"></div>
+                                        <h2 className="text-lg font-black text-slate-800">나만의 URL 관리자 (내 컴퓨터 전용)</h2>
+                                    </div>
+                                    <div className="flex flex-col gap-3">
+                                        <input type="text" value={newLinkName} onChange={(e) => setNewLinkName(e.target.value)} placeholder="URL 이름을 입력하세요" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-center" />
+                                        <input type="text" value={newLinkUrl} onChange={(e) => setNewLinkUrl(e.target.value)} placeholder="주소(URL)를 입력하세요" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-center" />
+                                        <button onClick={handleAddCustomLink} className="w-full bg-indigo-600 text-white py-3 rounded-2xl font-bold text-sm shadow-lg hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2"><Icon name={editingLinkId ? "check" : "plus-circle"} size={18} />{editingLinkId ? "수정 완료" : "나만의 주소 등록하기"}</button>
+                                        {editingLinkId && <button onClick={() => { setEditingLinkId(null); setNewLinkName(""); setNewLinkUrl(""); }} className="text-xs text-slate-400 font-bold underline">취소하기</button>}
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    {myCustomLinks.length > 0 ? myCustomLinks.map(link => (
+                                        <div key={link.id} className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all text-center">
+                                            <div className="flex flex-col gap-2">
+                                                <h3 className="font-black text-indigo-600 text-sm truncate">{link.name}</h3>
+                                                <p className="text-xs text-slate-400 truncate mb-2">{link.url}</p>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => handleEditCustomLink(link)} className="flex-1 bg-slate-100 text-slate-600 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95"><Icon name="edit-3" size={12} /> 수정</button>
+                                                    <button onClick={() => handleCopyText(link.url, "주소")} className="flex-1 bg-slate-100 text-slate-600 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95"><Icon name="copy" size={12} /> 복사</button>
+                                                    <button onClick={() => handleShareLink(link.name, link.url)} className="flex-1 bg-indigo-50 text-indigo-600 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95"><Icon name="share" size={12} /> 공유</button>
+                                                    <button onClick={() => handleDeleteCustomLink(link.id)} className="bg-rose-50 text-rose-500 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center active:scale-95"><Icon name="trash-2" size={12} /></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )) : <div className="text-center py-20 text-slate-300 font-bold">등록된 주소가 없습니다.</div>}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2 text-center">
+                                {filteredProducts.map(product => (
+                                    <div key={product.id} onClick={() => setSelectedProduct(product)} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200 cursor-pointer active:scale-[0.98] group flex flex-col relative text-center">
+                                        <button onClick={(e) => handleBatchDownload(e, product)} className="absolute top-1 right-1 z-10 p-1.5 bg-indigo-600/90 text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 md:opacity-100 transition-opacity"><Icon name="download" size={12} /></button>
+                                        <OptimizedImage src={product.images[0]} alt={product.title} />
+                                        <div className="p-1.5 flex-1 flex flex-col justify-center min-h-[55px] bg-white">
+                                            <p className="text-[7px] font-bold text-indigo-500 uppercase mb-0.5">{product.category}</p>
+                                            <h3 className="font-bold text-[12px] leading-tight line-clamp-2 text-slate-900">{product.title}</h3>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </main>
+
+                    {selectedProduct && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={() => setSelectedProduct(null)}>
+                            <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden flex flex-col h-[85vh] shadow-2xl relative" onClick={e => e.stopPropagation()}>
+                                <div className="p-6 flex justify-between items-start border-b shrink-0 bg-white">
+                                    <div className="flex-1 pr-4">
+                                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                                            <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase border border-indigo-100">{selectedProduct.category}</span>
+                                            <button onClick={() => handleBatchDownload(null, selectedProduct)} className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1 active:scale-95"><Icon name="download" size={10} /> 전체 저장</button>
+                                        </div>
+                                        <h2 className="text-xl font-black text-slate-900 leading-tight">{selectedProduct.title}</h2>
+                                    </div>
+                                    <button onClick={() => setSelectedProduct(null)} className="p-2.5 bg-slate-100 rounded-full text-slate-500 active:scale-90"><Icon name="x" size={20} /></button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-50/30">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                                        {selectedProduct.images.map((img, idx) => (
+                                            <div key={idx} className="relative group rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white text-center">
+                                                <OptimizedImage src={img} alt={idx} aspect="aspect-square" />
+                                                <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-full font-bold">{idx === 0 ? "메인 대표컷" : `이미지 ${idx+1}`}</div>
+                                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                    <button onClick={() => { const link = document.createElement('a'); link.href = img; link.download = `${selectedProduct.title}_${idx+1}.jpg`; link.click(); }} className="p-3.5 bg-white text-slate-800 rounded-2xl shadow-xl active:scale-90"><Icon name="download" size={20} /></button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-4 text-center">
+                                        <div className="flex items-center justify-center gap-2 mb-4 italic font-bold text-slate-800">제품 링크오더</div>
+                                        {[{ num: 1, label: "링크 1" }, { num: 2, label: "링크 2" }, { num: 3, label: "웹사이트 주소" }].map((item) => (
+                                            <LinkOrderItem 
+                                                key={item.num} 
+                                                productId={selectedProduct.id} 
+                                                num={item.num} 
+                                                defaultLabel={item.label} 
+                                                data={personalLinks[selectedProduct.id]?.[`link${item.num}`]} 
+                                                onSave={handleSaveLink} 
+                                                onDelete={handleDeleteLink} 
+                                                onCopy={handleCopyText} 
+                                                onShare={handleShareLink} 
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showToast && <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[110] bg-slate-900/90 backdrop-blur-md text-white px-6 py-3.5 rounded-2xl shadow-2xl text-[11px] font-bold animate-in slide-in-from-bottom-5 duration-300 flex items-center gap-2 border border-white/10"><div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />{showToast}</div>}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
