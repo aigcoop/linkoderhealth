@@ -63,15 +63,15 @@
             const isNew = !data?.url;
 
             return (
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 last:mb-0 shadow-inner text-left">
+                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 last:mb-0 shadow-inner text-left text-center">
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-2">
                             <input 
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                placeholder="이름 (예: 개인 쇼핑몰)"
-                                className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 outline-none focus:ring-2 focus:ring-indigo-100 w-full"
+                                placeholder="이름 (예: 스마트스토어)"
+                                className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 outline-none focus:ring-2 focus:ring-indigo-100 w-full text-center"
                             />
                         </div>
                         
@@ -81,7 +81,7 @@
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
                                 placeholder="마케팅 주소(URL)를 입력하세요"
-                                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-100 transition-all text-slate-600"
+                                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-100 transition-all text-slate-600 text-center"
                             />
                         </div>
 
@@ -127,7 +127,7 @@
 
             return (
                 <div 
-                    className={`relative overflow-hidden ${aspect} ${className} bg-slate-200 ${onClick ? 'cursor-pointer' : ''}`}
+                    className={`relative overflow-hidden ${aspect} ${className} bg-slate-200 ${onClick ? 'cursor-pointer hover:brightness-95 transition-all' : ''}`}
                     onClick={onClick}
                 >
                     {!loaded && !error && <div className="absolute inset-0 skeleton" />}
@@ -153,32 +153,194 @@
         const CATEGORIES = ["전체보기", "케어세르브 웨이브 플러스", "영양건강", "텔로메라GK,정", "디엘릭서", "의료기기", "기타"];
 
         const INITIAL_PRODUCTS = [
-            { id: 1, category: "영양건강", title: "CK밸런스 파워", content: "인삼발효추출분말 100% 프리미엄 제품.", images: ["images/CK밸런스1.jpg", "images/CK밸런스2.jpg", "images/CK밸런스3.jpg", "images/CK밸런스4.jpg"] },
-            { id: 2, category: "디엘릭서", title: "디엘릭서 그린", content: "치커리뿌리추출물, 유기농 발효 콤부차 등으로 몸의 순환을 돕습니다.", images: ["images/그린1.jpg", "images/그린2.jpg", "images/그린3.jpg", "images/그린4.jpg"] },
-            { id: 3, category: "디엘릭서", title: "디엘릭서 레드", content: "ABC 분말로 지친 일상에 활력을 채워줍니다.", images: ["images/레드3.jpg", "images/레드1.jpg", "images/레드2.jpg", "images/레드4.jpg"] },
-            { id: 4, category: "디엘릭서", title: "디엘릭서 화이트 글로우", content: "내면부터 차오르는 화사한 생기를 선사합니다.", images: ["images/화이트1.jpg", "images/화이트2.jpg", "images/화이트3.jpg", "images/화이트4.jpg"] },
-            { id: 5, category: "디엘릭서", title: "디엘릭서 브라운 효소", content: "소화를 돕는 100만 유닛 고역가 효소 제품입니다.", images: ["images/효소2.jpg", "images/효소1.jpg", "images/효소3.jpg", "images/효소4.jpg"] },
-            { id: 6, category: "영양건강", title: "액티브 디에스 프로 플러스", content: "딸기맛 영양 밸런스 단백질 쉐이크입니다.", images: ["images/쉐이크1.jpg", "images/쉐이크2.jpg", "images/쉐이크3.jpg", "images/쉐이크4.jpg"] },
-            { id: 7, category: "영양건강", title: "프로바이오틱스 플러스", content: "장 건강을 위한 50억 유산균 보장 제품입니다.", images: ["images/유산균1.jpg", "images/유산균2.jpg", "images/유산균3.jpg", "images/유산균4.jpg"] },
-            { id: 8, category: "영양건강", title: "알티지 플러스(오메가3)", content: "흡수율 높은 rTG 오메가3와 멀티 비타민을 한 번에.", images: ["images/오메가1.jpg", "images/오메가2.jpg", "images/오메가3.jpg", "images/오메가4.jpg"] },
-            { id: 9, category: "영양건강", title: "제너럴 밸런스 루테인지아잔틴", content: "눈 건강을 위한 루테인 지아잔틴 복합 추출물 함유.", images: ["images/루테인1.jpg", "images/루테인2.jpg", "images/루테인3.jpg", "images/루테인4.jpg"] },
-            { id: 10, category: "영양건강", title: "제너럴 밸런스 밀크씨슬", content: "간 건강과 활력을 위한 복합 기능성 건강기능식품.", images: ["images/밀크시슬1.jpg", "images/밀크시슬2.jpg", "images/밀크시슬3.jpg", "images/밀크시슬4.jpg"] },
-            { id: 11, category: "영양건강", title: "제너럴 밸런스 비타민C", content: "영국 DSM사 프리미엄 비타민C 원료 800mg 함유.", images: ["images/비타민C1.jpg", "images/비타민C2.jpg", "images/비타민C3.jpg", "images/비타민C4.png"] },
-            { id: 12, category: "영양건강", title: "제너럴 밸런스 식물성 MSM", content: "캐나다산 고순도 식물 유래 MSM으로 관절 건강 관리.", images: ["images/MSM1.jpg", "images/MSM2.jpg", "images/MSM3.jpg", "images/MSM4.jpg"] },
-            { id: 13, category: "영양건강", title: "제너럴 밸런스 칼슘 마그네슘", content: "뼈 건강과 근육 기능 유지를 돕는 7가지 복합 기능성 성분을 함유한 프리미엄 칼슘 마그네슘 제품입니다.", images: ["images/칼슘1.jpg", "images/칼슘2.jpg", "images/칼슘3.jpg", "images/칼슘4.jpg"] },
-            { id: 14, category: "영양건강", title: "지쿱카페 게르마늄 블랙", content: "게르마늄, 베타글루칸, 폴리페놀을 건강하게 즐길 수 있는 고품격 블랙 커피입니다.", images: ["images/커피1.jpg", "images/커피2.jpg", "images/커피3.jpg", "images/커피4.jpg"] },
-            { id: 28, category: "의료기기", title: "지쿱 라피 V (LAPY V)", content: "의료용 레이저 및 적외선 에너지를 조사하여 통증 완화에 도움을 주는 프리미엄 홈케어 의료기기입니다.", images: ["images/라피1.jpg", "images/라피2.jpg", "images/라피3.jpg", "images/라피4.jpg"] },
-            { id: 29, category: "케어세르브 웨이브 플러스", title: "케어세르브 웨이브 플러스", content: "테라헤르츠 파동과 온열 기능을 결합하여 발의 피로 회복과 순환을 돕는 고성능 온열기기입니다.", images: ["images/웨이브1.jpg", "images/웨이브2.jpg", "images/웨이브3.jpg", "images/웨이브4.jpg"] },
-            { id: 30, category: "의료기기", title: "케어세르브 테라패치", content: "영구자석의 자계를 이용하여 근육통 완화에 도움을 주는 의료용 자기 발생기입니다.", images: ["images/테라패치1.jpg", "images/테라패치2.jpg", "images/테라패치3.jpg", "images/테라패치4.jpg"] },
-            { id: 31, category: "디엘릭서", title: "디엘릭서 디톡스 다이어트 세트", content: "디엘릭서 3/3/3 프로그램을 위한 풀 패키지 세트입니다.", images: ["images/디톡스1.jpg", "images/디톡스2.jpg", "images/디톡스3.jpg", "images/디톡스4.jpg"] },
-            { id: 32, category: "텔로메라GK,정", title: "텔로메라 지케이(GK)", content: "필름형 제형으로 간편하게 섭취하는 제품입니다.", images: ["images/텔로메라1.jpg", "images/텔로메라2.jpg", "images/텔로메라3.jpg", "images/텔로메라4.jpg"] },
-            { id: 33, category: "텔로메라GK,정", title: "텔로메라 정", content: "정제(알약) 형태로 영양을 압축하여 담은 건강기능식품입니다.", images: ["images/텔로메라정1.jpg", "images/텔로메라정2.jpg", "images/텔로메라정3.jpg", "images/텔로메라정4.jpg"] }
+            { 
+                id: 1, category: "영양건강", title: "CK밸런스 파워", 
+                content: "발효 인삼 농축액 100%의 프리미엄 활력 에너지입니다.", 
+                points: ["진세노사이드 100mg/g 함유", "100% 국산 발효 인삼", "흡수율 극대화 기술 적용"],
+                ingredients: "발효인삼농축액분말(국산, 고형분 95% 이상, 진세노사이드 Rg1+Rb1+Rg3=100mg/g) 100%", 
+                usage: "1일 1회, 1포를 그대로 섭취하거나 온수에 타서 차로 즐기세요.",
+                recommend: ["면역력 증진이 필요한 분", "피로 개선이 시급한 직장인", "기억력 개선을 원하는 중장년층"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=3189", 
+                images: ["images/CK밸런스1.jpg", "images/CK밸런스2.jpg", "images/CK밸런스3.jpg", "images/CK밸런스4.jpg"] 
+            },
+            { 
+                id: 2, category: "디엘릭서", title: "디엘릭서 그린", 
+                content: "비움과 순환을 통해 가벼운 하루를 선사하는 클렌즈 엘릭서입니다.", 
+                points: ["유기농 발효 콤부차 함유", "치커리뿌리추출물 배합", "상큼한 레몬라임 맛"],
+                ingredients: "치커리뿌리추출물, 유기농발효콤부차분말, 레몬라임농축분말, 사과초모식초분말, 제주말차분말 등", 
+                usage: "물 200~500ml에 1포를 섞어 수시로 음용하세요.",
+                recommend: ["아침마다 몸이 무거운 분", "식이섬유 섭취가 부족한 분", "건강한 수분 섭취를 원하는 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=387&itemNo=5757", 
+                images: ["images/그린1.jpg", "images/그린2.jpg", "images/그린3.jpg", "images/그린4.jpg"] 
+            },
+            { 
+                id: 3, category: "디엘릭서", title: "디엘릭서 레드", 
+                content: "활력 넘치는 에너지를 위한 ABC(사과,비트,당근) 뷰티 엘릭서입니다.", 
+                points: ["유기농 ABC분말 밸런스", "과라나 추출 천연 카페인", "항산화 성분 고함유"],
+                ingredients: "유기농 ABC분말(사과,비트,당근), 과라나추출분말, 타우린, 자몽농축분말 등", 
+                usage: "에너지가 필요한 오후 시간대 물에 타서 시원하게 드세요.",
+                recommend: ["지치고 활력이 부족한 분", "ABC 주스를 간편하게 드시고 싶은 분", "운동 전 에너지 부스팅이 필요한 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=387&itemNo=5883", 
+                images: ["images/레드3.jpg", "images/레드1.jpg", "images/레드2.jpg", "images/레드4.jpg"] 
+            },
+            { 
+                id: 4, category: "디엘릭서", title: "디엘릭서 화이트 글로우", 
+                content: "내면부터 차오르는 환한 생기를 위한 광채 엘릭서입니다.", 
+                points: ["저분자 피쉬 콜라겐", "화이트 토마토 추출물", "글루타치온 & 비오틴 배합"],
+                ingredients: "저분자피쉬콜라겐, 화이트토마토추출분말, L-글루타치온(효모추출물), 히알루론산, 비오틴 등", 
+                usage: "저녁 세안 후 취침 전 1포를 섭취하는 것을 추천합니다.",
+                recommend: ["생기 있는 피부를 원하는 분", "화사한 인상을 관리하고 싶은 분", "이너뷰티 관리가 처음이신 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=387&itemNo=5252", 
+                images: ["images/화이트1.jpg", "images/화이트2.jpg", "images/화이트3.jpg", "images/화이트4.jpg"] 
+            },
+            { 
+                id: 5, category: "디엘릭서", title: "디엘릭서 브라운 효소", 
+                content: "식후 편안함과 영양 흡수를 돕는 100만 유닛 고역가 효소입니다.", 
+                points: ["아밀라아제 100만 유닛", "15곡 곡물 발효 효소", "구수한 인절미 풍미"],
+                ingredients: "곡물발효과채효소분말, 15곡 곡류혼합분말, 아밀라아제, 프로테아제 등", 
+                usage: "과식 후 또는 매 식사 후 1포를 그대로 씹거나 물과 함께 드세요.",
+                recommend: ["식후 속이 더부룩한 분", "탄수화물 섭취가 많은 한국인", "편안한 소화와 배변을 원하는 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=387&itemNo=5995", 
+                images: ["images/효소2.jpg", "images/효소1.jpg", "images/효소3.jpg", "images/효소4.jpg"] 
+            },
+            { 
+                id: 35, category: "디엘릭서", title: "디엘릭서 퍼플", 
+                content: "여성 건강과 활기를 채우는 포도/석류 기반의 보라빛 엘릭서입니다.", 
+                points: ["적포도 & 석류 고농축", "마카추출물 & L-아르지닌", "세븐베리 항산화 파워"],
+                ingredients: "정제수, 적포도농축액, 석류농축액, 포도추출분말, 마카농축분말, L-아르지닌, 타우린 등", 
+                usage: "1일 1회, 1포를 원액 그대로 드시거나 탄산수에 섞어 드세요.",
+                recommend: ["활기찬 일상을 원하는 여성", "운동 전후 빠른 회복이 필요한 분", "진하고 달콤한 건강 간식을 찾는 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=387&itemNo=5722", 
+                images: ["images/퍼플1.jpg", "images/퍼플2.jpg", "images/퍼플3.jpg", "images/퍼플4.jpg"] 
+            },
+            { 
+                id: 6, category: "영양건강", title: "액티브 디에스 프로 플러스", 
+                content: "딸기맛 영양 밸런스 단백질 쉐이크로 체중 조절을 지원합니다.", 
+                points: ["고단백 식이섬유 밸런스", "딸기농축분말 함유", "필수 비타민/미네랄 포함"],
+                ingredients: "분리대두단백, 딸기농축분말, 각종 비타민 및 미네랄", 
+                usage: "우유 또는 두유 200ml에 2스푼을 섞어 식사 대용으로 섭취하세요.",
+                recommend: ["건강한 체중 조절을 원하는 분", "간편하고 맛있는 단백질 섭취가 필요한 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=5893", 
+                images: ["images/쉐이크1.jpg", "images/쉐이크2.jpg", "images/쉐이크3.jpg", "images/쉐이크4.jpg"] 
+            },
+            { 
+                id: 7, category: "영양건강", title: "제너럴 밸런스 프로바이오틱스 플러스", 
+                content: "장 건강을 위한 50억 유산균 보장 제품입니다.", 
+                points: ["50억 CFU 보장 유산균", "17종 혼합 균주 배합", "정상적인 면역기능 아연 함유"],
+                ingredients: "17종 혼합유산균, 아연, 셀렌 등", 
+                usage: "1일 1회 1포를 직접 섭취하세요.",
+                recommend: ["배변 활동이 원활하지 않은 분", "장 건강 관리가 필요한 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=5852", 
+                images: ["images/유산균1.jpg", "images/유산균2.jpg", "images/유산균3.jpg", "images/유산균4.jpg"] 
+            },
+            { 
+                id: 8, category: "영양건강", title: "제너럴 밸런스 알티지 플러스", 
+                content: "흡수율 높은 rTG 오메가3와 비타민D를 한 번에 담았습니다.", 
+                points: ["rTG형 오메가3 적용", "중금속 걱정 없는 정제어유", "혈행 개선 및 눈 건강 도움"],
+                ingredients: "정제어유(rTG형), 비타민E, 비타민D 등", 
+                usage: "1일 1회 1캡슐을 충분한 물과 함께 섭취하세요.",
+                recommend: ["혈행 개선이 필요한 분", "건조한 눈 개선을 원하는 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=5776", 
+                images: ["images/오메가1.jpg", "images/오메가2.jpg", "images/오메가3.jpg", "images/오메가4.jpg"] 
+            },
+            { 
+                id: 9, category: "영양건강", title: "제너럴 밸런스 루테인지아잔틴", 
+                content: "황반 색소 밀도 유지를 통해 눈 건강을 지켜줍니다.", 
+                points: ["루테인지아잔틴 복합추출물", "헤마토코쿠스 추출물 함유", "어두운 곳 시각 적응 도움"],
+                ingredients: "마리골드꽃추출물, 헤마토코쿠스추출물 등", 
+                usage: "1일 1회 1캡슐을 식후 섭취하세요.",
+                recommend: ["컴퓨터 사용이 잦은 분", "침침한 눈 관리가 필요한 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=3210", 
+                images: ["images/루테인1.jpg", "images/루테인2.jpg", "images/루테인3.jpg", "images/루테인4.jpg"] 
+            },
+            { 
+                id: 10, category: "영양건강", title: "제너럴 밸런스 밀크씨슬", 
+                content: "간 건강과 에너지 대사를 돕는 복합 기능성 제품입니다.", 
+                points: ["실리마린 130mg 함유", "비타민 B군 5종 배합", "간 건강 기능성 인정"],
+                ingredients: "밀크씨슬추출물, 비타민B군 등", 
+                usage: "1일 1회 1정 섭취하세요.",
+                recommend: ["회식이 잦은 분", "아침에 일어나기 힘든 분"],
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=3206", 
+                images: ["images/밀크시슬1.jpg", "images/밀크시슬2.jpg", "images/밀크시슬3.jpg", "images/밀크시슬4.jpg"] 
+            },
+            { 
+                id: 11, category: "영양건강", title: "제너럴 밸런스 비타민C", 
+                content: "영국 DSM사 프리미엄 원료를 사용한 항산화 비타민입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=3213", 
+                points: ["DSM사 영국산 비타민C", "항산화 작용 필수 영양", "유해산소로부터 세포 보호"],
+                images: ["images/비타민C1.jpg", "images/비타민C2.jpg", "images/비타민C3.jpg", "images/비타민C4.png"] 
+            },
+            { 
+                id: 12, category: "영양건강", title: "제너럴 밸런스 식물성 MSM", 
+                content: "캐나다산 고순도 식물 유래 MSM으로 관절 건강을 관리하세요.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=5245", 
+                points: ["고순도 100% 식물 유래 MSM", "관절 및 연골 건강 도움", "캐나다 프리미엄 원료"],
+                images: ["images/MSM1.jpg", "images/MSM2.jpg", "images/MSM3.jpg", "images/MSM4.jpg"] 
+            },
+            { 
+                id: 13, category: "영양건강", title: "제너럴 밸런스 칼슘 마그네슘", 
+                content: "뼈 건강과 근육 기능 유지를 위한 프리미엄 배합입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=5866", 
+                points: ["해조칼슘 & 쌀마그네슘 2:1", "비타민 D/K 기능성 추가", "신경 및 근육 유지 도움"],
+                images: ["images/칼슘1.jpg", "images/칼슘2.jpg", "images/칼슘3.jpg", "images/칼슘4.jpg"] 
+            },
+            { 
+                id: 14, category: "영양건강", title: "지쿱카페 게르마늄 블랙", 
+                content: "게르마늄과 폴리페놀을 건강하게 즐기는 고품격 커피입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=5186", 
+                points: ["게르마늄 함유 프리미엄 빈", "깊고 풍부한 바디감", "항산화 폴리페놀 함유"],
+                images: ["images/커피1.jpg", "images/커피2.jpg", "images/커피3.jpg", "images/커피4.jpg"] 
+            },
+            { 
+                id: 28, category: "의료기기", title: "지쿱 라피 V (LAPY V)", 
+                content: "의료용 레이저 및 적외선을 이용한 통증 완화 의료기기입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=279&itemNo=5885", 
+                points: ["3등급 통증 완화 의료기기", "레이저/적외선 듀얼 조사", "편리한 무선형 홈케어"],
+                images: ["images/라피1.jpg", "images/라피2.jpg", "images/라피3.jpg", "images/라피4.jpg"] 
+            },
+            { 
+                id: 29, category: "케어세르브 웨이브 플러스", 
+                title: "케어세르브 웨이브 플러스", 
+                content: "테라헤르츠 파동과 온열 기능으로 전신 순환을 돕는 기기입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=&itemNo=6027", 
+                points: ["테라헤르츠 파동 기술", "스마트 온열 제어 시스템", "발 반사요법 및 전신 케어"],
+                images: ["images/웨이브1.jpg", "images/웨이브2.jpg", "images/웨이브3.jpg", "images/웨이브4.jpg"] 
+            },
+            { 
+                id: 30, category: "의료기기", title: "케어세르브 테라패치", 
+                content: "영구자석의 자계를 이용하여 근육통을 완화하는 패치형 기기입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=279&itemNo=5897", 
+                points: ["의료용 자기 발생 패치", "간편한 부착형 근육 관리", "냄새 없는 저자극 밴드"],
+                images: ["images/테라패치1.jpg", "images/테라패치2.jpg", "images/테라패치3.jpg", "images/테라패치4.jpg"] 
+            },
+            { 
+                id: 31, category: "디엘릭서", title: "디엘릭서 디톡스 다이어트 세트", 
+                content: "체계적인 3단계 비움 프로그램을 위한 올인원 다이어트 팩입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=387&itemNo=6030", 
+                points: ["디엘릭서 풀 라인업 포함", "3/3/3 단계별 프로그램 가이드", "균형 잡힌 영양 보충"],
+                images: ["images/디톡스1.jpg", "images/디톡스2.jpg", "images/디톡스3.jpg", "images/디톡스4.jpg"] 
+            },
+            { 
+                id: 32, category: "텔로메라GK,정", title: "텔로메라 지케이(GK)", 
+                content: "필름형 제형으로 점막 흡수가 용이한 고농축 활력 관리 제품입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=290&itemNo=5940", 
+                points: ["구강 점막 흡수 필름 제형", "간편한 휴대 및 섭취", "프리미엄 원료 농축"],
+                images: ["images/텔로메라1.jpg", "images/텔로메라2.jpg", "images/텔로메라3.jpg", "images/텔로메라4.jpg"] 
+            },
+            { 
+                id: 33, category: "텔로메라GK,정", title: "텔로메라 정", 
+                content: "체내 에너지 생성과 대사를 활발하게 돕는 영양 농축 정제입니다.", 
+                officialUrl: "https://vcshop.gcoop.com/kr/display?cate=290&itemNo=5945", 
+                points: ["에너지 대사 나이아신 배합", "강력한 활력 부스팅", "하루 2정 간편 관리"],
+                images: ["images/텔로메라정1.jpg", "images/텔로메라정2.jpg", "images/텔로메라정3.jpg", "images/텔로메라정4.jpg"] 
+            }
         ];
 
         function App() {
             const [selectedCategory, setSelectedCategory] = useState("전체보기");
             const [searchQuery, setSearchQuery] = useState("");
             const [selectedProduct, setSelectedProduct] = useState(null);
+            const [modalTab, setModalTab] = useState("이미지");
             const [fullScreenImage, setFullScreenImage] = useState(null);
             const [showToast, setShowToast] = useState(null);
             const [personalLinks, setPersonalLinks] = useState({});
@@ -189,11 +351,11 @@
             const [editingLinkId, setEditingLinkId] = useState(null);
 
             const SHOP_URL = "https://vcshop.gcoop.com/kr";
+            const DEFAULT_FALLBACK_URL = "https://vcshop.gcoop.com/kr/display?cate=7&itemNo=3189";
 
             useEffect(() => {
                 const savedPersonal = localStorage.getItem('gcoop_personalLinks');
                 if (savedPersonal) setPersonalLinks(JSON.parse(savedPersonal));
-
                 const savedCustom = localStorage.getItem('gcoop_myCustomLinks');
                 if (savedCustom) setMyCustomLinks(JSON.parse(savedCustom));
             }, []);
@@ -215,7 +377,6 @@
                 const updatedLinks = { ...personalLinks };
                 if (!updatedLinks[productId]) updatedLinks[productId] = {};
                 updatedLinks[productId][`link${index}`] = { name, url };
-                
                 setPersonalLinks(updatedLinks);
                 localStorage.setItem('gcoop_personalLinks', JSON.stringify(updatedLinks));
                 displayToast(`${name} 정보가 저장되었습니다.`);
@@ -233,25 +394,16 @@
 
             const handleAddCustomLink = () => {
                 if (!newLinkUrl) { displayToast("주소를 입력해주세요."); return; }
-                
                 let updatedCustom;
                 if (editingLinkId) {
-                    updatedCustom = myCustomLinks.map(link => 
-                        link.id === editingLinkId ? { ...link, name: newLinkName || "제목 없음", url: newLinkUrl } : link
-                    );
+                    updatedCustom = myCustomLinks.map(link => link.id === editingLinkId ? { ...link, name: newLinkName || "제목 없음", url: newLinkUrl } : link);
                     displayToast("링크가 수정되었습니다.");
                     setEditingLinkId(null);
                 } else {
-                    const newLink = {
-                        id: Date.now().toString(),
-                        name: newLinkName || "제목 없음",
-                        url: newLinkUrl,
-                        createdAt: Date.now()
-                    };
+                    const newLink = { id: Date.now().toString(), name: newLinkName || "제목 없음", url: newLinkUrl, createdAt: Date.now() };
                     updatedCustom = [newLink, ...myCustomLinks];
                     displayToast("새 링크가 등록되었습니다.");
                 }
-                
                 setMyCustomLinks(updatedCustom);
                 localStorage.setItem('gcoop_myCustomLinks', JSON.stringify(updatedCustom));
                 setNewLinkName("");
@@ -317,12 +469,17 @@
                 displayToast("이미지 저장 중...");
             };
 
+            const openProductModal = (product) => {
+                setSelectedProduct(product);
+                setModalTab("이미지");
+            };
+
             return (
                 <div className="min-h-screen pb-24 text-slate-900">
                     <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b px-4 py-4 h-16 flex items-center justify-between shadow-sm text-center">
                         <div className="flex items-center gap-2 overflow-hidden mx-auto md:mx-0">
                             <div className="bg-indigo-600 p-1.5 rounded-lg text-white shadow-lg flex-shrink-0"><Icon name="layout-grid" size={18} /></div>
-                            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 overflow-hidden">
+                            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 overflow-hidden text-left">
                                 <h1 className="text-[11px] md:text-sm font-black text-slate-800 tracking-tight whitespace-nowrap truncate">
                                     지쿱 제품 이미지 및 성분표, 링크오더 보관소
                                 </h1>
@@ -336,7 +493,6 @@
                                 </div>
                             </div>
                         </div>
-                        <span className="bg-indigo-50 text-indigo-600 text-[9px] font-bold px-2 py-0.5 rounded-full border border-indigo-100 uppercase tracking-tighter flex-shrink-0 ml-2 hidden sm:inline-block">LOCAL FOLDER MODE</span>
                     </header>
 
                     <div className="fixed top-16 left-0 right-0 z-30 bg-white border-b shadow-sm">
@@ -353,7 +509,7 @@
                         </div>
                     </div>
 
-                    <main className="pt-48 px-2 max-w-6xl mx-auto">
+                    <main className="pt-48 px-2 max-w-6xl mx-auto text-center">
                         {selectedCategory === "기타" ? (
                             <div className="max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="bg-white rounded-[2rem] p-6 shadow-md border border-indigo-100 mb-8 text-center">
@@ -386,10 +542,9 @@
                                 </div>
                             </div>
                         ) : (
-                            /* 모바일: grid-cols-3, 태블릿: grid-cols-4, 데스크톱: grid-cols-6 */
                             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 text-center">
                                 {filteredProducts.map(product => (
-                                    <div key={product.id} onClick={() => setSelectedProduct(product)} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200 cursor-pointer active:scale-[0.98] group flex flex-col relative text-center">
+                                    <div key={product.id} onClick={() => openProductModal(product)} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200 cursor-pointer active:scale-[0.98] group flex flex-col relative text-center">
                                         <button onClick={(e) => handleBatchDownload(e, product)} className="absolute top-1 right-1 z-10 p-1.5 bg-indigo-600/90 text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 md:opacity-100 transition-opacity"><Icon name="download" size={12} /></button>
                                         <OptimizedImage src={product.images[0]} alt={product.title} />
                                         <div className="p-1.5 flex-1 flex flex-col justify-center min-h-[55px] bg-white">
@@ -402,62 +557,218 @@
                         )}
                     </main>
 
-                    {/* Product Detail Modal */}
+                    {/* Product Detail Modal with 3 Tabs */}
                     {selectedProduct && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={() => setSelectedProduct(null)}>
-                            <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden flex flex-col h-[85vh] shadow-2xl relative text-center" onClick={e => e.stopPropagation()}>
-                                <div className="p-6 flex justify-between items-start border-b shrink-0 bg-white">
-                                    <div className="flex-1 pr-4">
-                                        <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
-                                            <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase border border-indigo-100">{selectedProduct.category}</span>
-                                            <button onClick={() => handleBatchDownload(null, selectedProduct)} className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1 active:scale-95"><Icon name="download" size={10} /> 전체 저장</button>
-                                        </div>
-                                        <h2 className="text-xl font-black text-slate-900 leading-tight">{selectedProduct.title}</h2>
+                            <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden flex flex-col h-[85vh] shadow-2xl relative text-center animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+                                {/* Modal Header */}
+                                <div className="p-6 pb-2 shrink-0 bg-white relative">
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase border border-indigo-100 mb-2">
+                                            {selectedProduct.category}
+                                        </span>
+                                        <h2 className="text-xl font-black text-slate-900 leading-tight mb-4">{selectedProduct.title}</h2>
                                     </div>
-                                    <button onClick={() => setSelectedProduct(null)} className="p-2.5 bg-slate-100 rounded-full text-slate-500 active:scale-90"><Icon name="x" size={20} /></button>
+                                    <button onClick={() => setSelectedProduct(null)} className="absolute top-6 right-6 p-2.5 bg-slate-100 rounded-full text-slate-500 active:scale-90 shadow-sm">
+                                        <Icon name="x" size={20} />
+                                    </button>
+                                    
+                                    <div className="flex border-b border-slate-100 mt-2 px-2">
+                                        {[
+                                            { id: "이미지", icon: "image" },
+                                            { id: "상세/성분", icon: "file-text" },
+                                            { id: "내 링크오더", icon: "link" }
+                                        ].map(tab => (
+                                            <button 
+                                                key={tab.id}
+                                                onClick={() => setModalTab(tab.id)}
+                                                className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold transition-all border-b-2 ${modalTab === tab.id ? 'text-indigo-600 border-indigo-600' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
+                                            >
+                                                <Icon name={tab.icon} size={14} />
+                                                {tab.id}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-50/30">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                                        {selectedProduct.images.map((img, idx) => (
-                                            <div key={idx} className="relative group rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white">
-                                                <OptimizedImage 
-                                                    src={img} 
-                                                    alt={idx} 
-                                                    aspect="aspect-square" 
-                                                    onClick={() => setFullScreenImage(img)}
-                                                />
-                                                <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-full font-bold">{idx === 0 ? "메인 대표컷" : `이미지 ${idx+1}`}</div>
-                                                
-                                                <button 
-                                                    onClick={(e) => handleSingleDownload(e, img, selectedProduct.title, idx)}
-                                                    className="absolute bottom-3 right-3 p-2.5 bg-white/90 backdrop-blur-md text-indigo-600 rounded-2xl shadow-xl hover:bg-indigo-600 hover:text-white transition-all active:scale-90 flex items-center justify-center border border-slate-100"
-                                                    title="이 이미지만 저장"
-                                                >
-                                                    <Icon name="download" size={16} />
-                                                </button>
 
-                                                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center justify-center">
-                                                    <span className="bg-black/40 text-white text-[9px] px-2 py-1 rounded-lg backdrop-blur-sm">클릭 시 크게 보기</span>
+                                {/* Content Area */}
+                                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-50/30">
+                                    {/* TAB 1: 이미지 */}
+                                    {modalTab === "이미지" && (
+                                        <div className="animate-in fade-in duration-300">
+                                            <div className="flex justify-end mb-4">
+                                                <button onClick={() => handleBatchDownload(null, selectedProduct)} className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100 flex items-center gap-1 active:scale-95 shadow-sm">
+                                                    <Icon name="download" size={12} /> 전체 이미지 저장
+                                                </button>
+                                            </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                {selectedProduct.images.map((img, idx) => (
+                                                    <div key={idx} className="relative group rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white">
+                                                        <OptimizedImage 
+                                                            src={img} 
+                                                            alt={`Product ${idx}`} 
+                                                            aspect="aspect-square" 
+                                                            onClick={() => setFullScreenImage(img)}
+                                                        />
+                                                        <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-full font-bold">
+                                                            {idx === 0 ? "메인" : idx === 3 ? "상세/성분" : `이미지 ${idx+1}`}
+                                                        </div>
+                                                        <button 
+                                                            onClick={(e) => handleSingleDownload(e, img, selectedProduct.title, idx)}
+                                                            className="absolute bottom-3 right-3 p-2.5 bg-white/90 backdrop-blur-md text-indigo-600 rounded-2xl shadow-xl hover:bg-indigo-600 hover:text-white transition-all active:scale-90 border border-slate-100"
+                                                        >
+                                                            <Icon name="download" size={16} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* TAB 2: 상세/성분 (더욱 디테일하게 보강) */}
+                                    {modalTab === "상세/성분" && (
+                                        <div className="animate-in fade-in duration-300 space-y-5 max-w-lg mx-auto text-left">
+                                            {/* Overview Card */}
+                                            <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 relative overflow-hidden group text-center">
+                                                <div className="flex items-center justify-center gap-2 mb-4">
+                                                    <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full"></div>
+                                                    <h3 className="text-[11px] font-black text-indigo-600 uppercase tracking-widest">Product Description</h3>
+                                                </div>
+                                                <div className="space-y-5">
+                                                    <div className="text-center">
+                                                        <h4 className="text-[11px] font-bold text-slate-800 mb-2 flex items-center justify-center gap-1.5">
+                                                            <Icon name="check-circle" size={14} className="text-emerald-500" /> 제품 특징 및 요약
+                                                        </h4>
+                                                        <p className="text-[13px] text-slate-700 leading-relaxed font-medium">{selectedProduct.content}</p>
+                                                    </div>
+
+                                                    {selectedProduct.points && (
+                                                        <div className="text-center">
+                                                            <h4 className="text-[11px] font-bold text-slate-800 mb-2 flex items-center justify-center gap-1.5">
+                                                                <Icon name="star" size={14} className="text-amber-500" /> 핵심 포인트 (Key Points)
+                                                            </h4>
+                                                            <div className="flex flex-col items-center gap-1.5">
+                                                                {selectedProduct.points.map((pt, i) => (
+                                                                    <div key={i} className="text-[12.5px] text-slate-600 font-bold">• {pt}</div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {selectedProduct.usage && (
+                                                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                                                            <h4 className="text-[11px] font-bold text-indigo-600 mb-2 flex items-center justify-center gap-1.5">
+                                                                <Icon name="info" size={14} /> 섭취 및 사용 방법
+                                                            </h4>
+                                                            <p className="text-[12.5px] text-slate-600 leading-relaxed font-medium">{selectedProduct.usage}</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                    <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-4">
-                                        <div className="flex items-center justify-center gap-2 mb-4 italic font-bold text-slate-800 underline decoration-indigo-200">제품 링크오더</div>
-                                        {[{ num: 1, label: "링크 1" }, { num: 2, label: "링크 2" }, { num: 3, label: "웹사이트 주소" }].map((item) => (
-                                            <LinkOrderItem 
-                                                key={item.num} 
-                                                productId={selectedProduct.id} 
-                                                num={item.num} 
-                                                defaultLabel={item.label} 
-                                                data={personalLinks[selectedProduct.id]?.[`link${item.num}`]} 
-                                                onSave={handleSaveLink} 
-                                                onDelete={handleDeleteLink} 
-                                                onCopy={handleCopyText} 
-                                                onShare={handleShareLink} 
-                                            />
-                                        ))}
-                                    </div>
+
+                                            {/* Ingredients Section */}
+                                            <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 text-center">
+                                                <div className="flex items-center justify-center gap-2 mb-4">
+                                                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                                                    <h3 className="text-[11px] font-black text-emerald-500 uppercase tracking-widest">Ingredients (주요 성분)</h3>
+                                                </div>
+                                                <div className="bg-emerald-50/50 rounded-2xl p-4 border border-emerald-100/50">
+                                                    <p className="text-[12.5px] text-slate-700 leading-relaxed font-medium tracking-tight">
+                                                        {selectedProduct.ingredients || "상세 이미지의 성분표를 통해 전성분을 확인하실 수 있습니다."}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Recommendation Section */}
+                                            {selectedProduct.recommend && (
+                                                <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 text-center">
+                                                    <div className="flex items-center justify-center gap-2 mb-4">
+                                                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                                                        <h3 className="text-[11px] font-black text-amber-500 uppercase tracking-widest">Recommended For</h3>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        {selectedProduct.recommend.map((rec, i) => (
+                                                            <div key={i} className="flex items-center justify-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                                                <div className="bg-white w-6 h-6 rounded-full flex items-center justify-center shadow-sm text-[10px] font-black text-indigo-600 shrink-0">{i+1}</div>
+                                                                <span className="text-[12.5px] text-slate-600 font-bold">{rec}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                            <p className="text-[10px] text-slate-400 text-center mt-4 font-medium italic">※ 상세한 전성분 및 주의사항은 제품 이미지 탭의 성분표 사진을 반드시 참고해 주세요.</p>
+                                        </div>
+                                    )}
+
+                                    {/* TAB 3: 내 링크오더 */}
+                                    {modalTab === "내 링크오더" && (
+                                        <div className="animate-in fade-in duration-300 max-lg mx-auto">
+                                            <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-4 text-center">
+                                                <div className="flex items-center justify-center gap-2 mb-6 text-center">
+                                                    <div className="w-1 h-4 bg-indigo-600 rounded-full"></div>
+                                                    <h3 className="font-bold text-slate-800 text-base tracking-tight italic underline decoration-indigo-200">나의 마케팅 채널 설정</h3>
+                                                </div>
+
+                                                {/* 쇼핑몰 상세페이지 고정 링크 섹션 */}
+                                                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mb-8 shadow-inner text-center">
+                                                    <div className="flex flex-col gap-2">
+                                                        <p className="text-[11px] font-black text-indigo-700 flex items-center justify-center gap-1.5">
+                                                            <Icon name="external-link" size={12} />
+                                                            쇼핑몰 상세페이지 (클릭시이동)
+                                                        </p>
+                                                        <a 
+                                                            href={selectedProduct.officialUrl || DEFAULT_FALLBACK_URL} 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer" 
+                                                            className="text-[10px] text-slate-500 break-all underline decoration-slate-300 font-medium block text-center"
+                                                        >
+                                                            {selectedProduct.officialUrl || DEFAULT_FALLBACK_URL}
+                                                        </a>
+                                                        <div className="flex gap-2 mt-1">
+                                                            <button 
+                                                                onClick={() => handleShareLink("쇼핑몰 상세페이지", selectedProduct.officialUrl || DEFAULT_FALLBACK_URL)}
+                                                                className="flex-1 bg-white text-indigo-600 border border-indigo-100 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95 shadow-sm"
+                                                            >
+                                                                <Icon name="share" size={12} /> 공유하기
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => handleCopyText(selectedProduct.officialUrl || DEFAULT_FALLBACK_URL, "상세페이지 주소")}
+                                                                className="bg-white text-slate-400 border border-slate-100 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95 shadow-sm"
+                                                            >
+                                                                <Icon name="copy" size={12} /> 복사
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center justify-center gap-2 mb-4 px-2 text-center">
+                                                    <div className="bg-slate-200 h-[1px] flex-1"></div>
+                                                    <span className="text-[9px] font-bold text-slate-300 uppercase">개인 등록 링크 (5개)</span>
+                                                    <div className="bg-slate-200 h-[1px] flex-1"></div>
+                                                </div>
+
+                                                {[1, 2, 3, 4, 5].map((num) => (
+                                                    <LinkOrderItem 
+                                                        key={num} 
+                                                        productId={selectedProduct.id} 
+                                                        num={num} 
+                                                        defaultLabel={`링크 ${num}`} 
+                                                        data={personalLinks[selectedProduct.id]?.[`link${num}`]} 
+                                                        onSave={handleSaveLink} 
+                                                        onDelete={handleDeleteLink} 
+                                                        onCopy={handleCopyText} 
+                                                        onShare={handleShareLink} 
+                                                    />
+                                                ))}
+                                                <p className="text-[10px] text-slate-400 mt-4 font-medium text-center">※ 기기 로컬 스토리지에 안전하게 보관됩니다.</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className="p-4 bg-white border-t shrink-0 text-center">
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">© GCOOP Partner PRO HUB - 사업자 도구</p>
                                 </div>
                             </div>
                         </div>
@@ -466,16 +777,16 @@
                     {/* Image Full Screen Overlay */}
                     {fullScreenImage && (
                         <div className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-2 sm:p-8 animate-in fade-in zoom-in-95 duration-200" onClick={() => setFullScreenImage(null)}>
-                            <div className="relative w-full h-full flex items-center justify-center max-w-4xl mx-auto">
+                            <div className="relative w-full h-full flex items-center justify-center max-w-4xl mx-auto text-center">
                                 <button 
                                     onClick={() => setFullScreenImage(null)}
-                                    className="absolute top-4 right-4 z-[210] p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors active:scale-90"
+                                    className="absolute top-4 right-4 z-[210] p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors active:scale-90 shadow-2xl"
                                 >
                                     <Icon name="x" size={28} />
                                 </button>
                                 <img 
                                     src={fullScreenImage} 
-                                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" 
+                                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl mx-auto" 
                                     alt="Full view"
                                     onClick={e => e.stopPropagation()}
                                 />
@@ -483,7 +794,13 @@
                         </div>
                     )}
 
-                    {showToast && <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[110] bg-slate-900/90 backdrop-blur-md text-white px-6 py-3.5 rounded-2xl shadow-2xl text-[11px] font-bold animate-in slide-in-from-bottom-5 duration-300 flex items-center gap-2 border border-white/10"><div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />{showToast}</div>}
+                    {/* Toast Notification */}
+                    {showToast && (
+                        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[250] bg-slate-900/90 backdrop-blur-md text-white px-6 py-3.5 rounded-2xl shadow-2xl text-[11px] font-bold animate-in slide-in-from-bottom-5 duration-300 flex items-center gap-2 border border-white/10">
+                            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                            {showToast}
+                        </div>
+                    )}
                 </div>
             );
         }
